@@ -1,19 +1,26 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import Header from "./components/Header";
+import React, { useState } from 'react';
+import Button from './components/Button';
+import Input from './components/Input';
 
+export default function App() {
+  const [nome, setNome] = useState('');
 
-function App() {
+  const handleClick = () => {
+    alert(`Olá, ${nome || 'visitante'}!`);
+  };
+
   return (
-    <>
-      <Header />
-      <main className="p-4">
-        <h2 className="text-2xl font-semibold">Bem-vindo à Pastelaria!</h2> 
-        <p>Explore nosso cardápio delicioso!</p> 
-      </main>
-    </>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white shadow-md rounded p-6 w-full max-w-sm">
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">Boas-vindas 👋</h1>
+        <Input
+          label="Seu nome:"
+          name="nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+        <Button onClick={handleClick}>Dizer Olá</Button>
+      </div>
+    </div>
   );
 }
-
-export default App;
