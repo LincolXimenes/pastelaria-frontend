@@ -1,10 +1,27 @@
-import Alert from './components/Alert';
+import React, { useState } from 'react';
+import Modal from './components/Modal';
 
-// ... dentro do return
+function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-<>
-  <Alert type="success" message="Operação realizada com sucesso!" />
-  <Alert type="error" message="Ocorreu um erro ao processar sua requisição." />
-  <Alert type="warning" message="Atenção: campos obrigatórios não preenchidos." />
-  <Alert type="info" message="Bem-vindo ao sistema!" />
-</>
+  return (
+    <div className="p-6">
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Abrir Modal
+      </button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Título do Modal"
+      >
+        <p>Conteúdo interno do modal.</p>
+      </Modal>
+    </div>
+  );
+}
+
+export default App;
