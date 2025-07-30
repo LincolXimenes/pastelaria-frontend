@@ -1,10 +1,10 @@
-import react from 'react';
+import React from 'react';
 
-export default function Card ({ title, children }) {
+export default function Card ({ title, description, children }) {
     return (
-        <div className="bg-white rounded-xl shadow-md p-4 w-full max-w-md">
-            {title && <h2 className="text-xl font-semibold mb-s">{title}</h2>}
-            <div>{children}</div>            
-        </div>
-    );
+        <div className="bg-white rounded shadow p-4">
+      <h2 className="font-bold text-lg">{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
 }
