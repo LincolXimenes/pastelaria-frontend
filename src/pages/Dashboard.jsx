@@ -1,16 +1,10 @@
 import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Container from '../components/Container';
-import DashboardCard from '../components/DashboardCard';
-//import Sidebar from '../components/Sidebar';
 
-
-export default function Dashboard() {
+export default function DashboardCard({ title, value }) {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard funcionando</h1>
-      <p>Se você está vendo isso, o componente está carregando corretamente!</p>
+    <div className="bg-white rounded shadow p-4 flex flex-col items-center">
+      <span className="text-3xl font-bold">{value}</span>
+      <span className="text-gray-600">{title}</span>
     </div>
   );
 }

@@ -1,20 +1,16 @@
-import Container from "./Container";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
     return (
-        <header className="bg-blue-600 text-white py-4 shadow">
-            <Container>
-                <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-bold">Pastelaria</h1>
-                    <nav>
-                        <ul className="flex gap-4">
-                            <li><a href="#" className="hover:underline">Início</a></li>
-                            <li><a href="#" className="hover:underline">Cardápio</a></li>
-                            <li><a href="#" className="hover:underline">Contato</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </Container>
+        <header className="bg-yellow-400 p-4 flex justify-between items-center">
+            <h1 className="text-xl font-bold">Pastelaria</h1>
+            <nav>                
+              <Link to="/" className="mx-2 hover:underline">Dashboard</Link>
+              <Link to="/produtos" className="mx-2 hover:underline">Produtos</Link>
+              <Link to="/pedidos" className="mx-2 hover:underline">Pedidos</Link>
+              <Link to="/relatorios" className="mx-2 hover:underline">Relatórios</Link>
+            </nav>
         </header>
-    );
+  );
 }
