@@ -1,53 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { pedidoService } from '../../services/pedidoService';
 
 export default function MeusPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
   const [filtroStatus, setFiltroStatus] = useState('todos');
-
-  // Dados mock de pedidos
-  const pedidosMock = [
-    {
-      id: 1,
-      numero: '#001',
-      data: '2025-01-20',
-      status: 'entregue',
-      total: 43.50,
-      itens: [
-        { nome: 'Pastel de Carne', quantidade: 2, preco: 15.50 },
-        { nome: 'Pastel de Queijo', quantidade: 1, preco: 12.50 }
-      ],
-      endereco: 'Rua das Flores, 456 - Centro',
-      observacoes: 'Sem cebola no pastel de carne'
-    },
-    {
-      id: 2,
-      numero: '#002',
-      data: '2025-01-22',
-      status: 'preparando',
-      total: 28.00,
-      itens: [
-        { nome: 'Pastel de Frango', quantidade: 1, preco: 16.00 },
-        { nome: 'Coca-Cola 350ml', quantidade: 2, preco: 6.00 }
-      ],
-      endereco: 'Av. Principal, 789 - Jardim',
-      observacoes: ''
-    },
-    {
-      id: 3,
-      numero: '#003',
-      data: '2025-01-25',
-      status: 'pendente',
-      total: 55.00,
-      itens: [
-        { nome: 'Pastel de Pizza', quantidade: 2, preco: 18.00 },
-        { nome: 'Pastel de Queijo', quantidade: 1, preco: 12.50 },
-        { nome: 'Suco de Laranja', quantidade: 2, preco: 6.50 }
-      ],
-      endereco: 'Rua Nova, 321 - Vila Nova',
-      observacoes: 'Entregar após 19h'
-    }
-  ];
 
   const statusConfig = {
     pendente: { 
@@ -83,12 +41,18 @@ export default function MeusPedidos() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    // Simular carregamento
-    setTimeout(() => {
-      setPedidos(pedidosMock);
+    const carregarPedidos = async () => {
+      setLoading(true);
+      setErro(null);
+      const result = await pedidoService.listar();
+      if (result.success) {
+        setPedidos(result.data);
+      } else {
+        setErro(result.error);
+      }
       setLoading(false);
-    }, 1000);
+    };
+    carregarPedidos();
   }, []);
 
   const pedidosFiltrados = pedidos.filter(pedido => 
@@ -116,6 +80,21 @@ export default function MeusPedidos() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Carregando seus pedidos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar pedidos</h3>
+          <p className="text-gray-600 mb-4">{erro}</p>
+          <button onClick={() => window.location.reload()} className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
+            Tentar novamente
+          </button>
         </div>
       </div>
     );
@@ -170,7 +149,7 @@ export default function MeusPedidos() {
       {pedidosFiltrados.length > 0 ? (
         <div className="space-y-6">
           {pedidosFiltrados.map(pedido => (
-            <div key={pedido.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div key={pedido._id || pedido.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
               {/* Header do Pedido */}
               <div className="bg-gray-50 px-6 py-4 border-b">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

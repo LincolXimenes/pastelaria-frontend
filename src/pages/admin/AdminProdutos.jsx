@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { produtoService } from '../../services/produtoService';
 
 export default function AdminProdutos() {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
   const [filtroCategoria, setFiltroCategoria] = useState('todos');
   const [busca, setBusca] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
   const [produtoEditando, setProdutoEditando] = useState(null);
-
-  // Dados mock de produtos
-  const produtosMock = [
-    { id: 1, nome: 'Pastel de Carne', categoria: 'pasteis', preco: 15.50, ativo: true, estoque: 50, vendas_mes: 120 },
-    { id: 2, nome: 'Pastel de Queijo', categoria: 'pasteis', preco: 12.50, ativo: true, estoque: 35, vendas_mes: 95 },
-    { id: 3, nome: 'Pastel de Frango', categoria: 'pasteis', preco: 16.00, ativo: true, estoque: 42, vendas_mes: 88 },
-    { id: 4, nome: 'Pastel de Pizza', categoria: 'pasteis', preco: 18.00, ativo: true, estoque: 28, vendas_mes: 76 },
-    { id: 5, nome: 'Coca-Cola 350ml', categoria: 'bebidas', preco: 5.00, ativo: true, estoque: 80, vendas_mes: 200 },
-    { id: 6, nome: 'Suco de Laranja', categoria: 'bebidas', preco: 6.50, ativo: true, estoque: 25, vendas_mes: 65 },
-    { id: 7, nome: 'Pudim de Leite', categoria: 'sobremesas', preco: 8.00, ativo: true, estoque: 15, vendas_mes: 45 },
-    { id: 8, nome: 'Brigadeiro', categoria: 'sobremesas', preco: 3.50, ativo: false, estoque: 0, vendas_mes: 0 }
-  ];
 
   const categorias = [
     { value: 'todos', label: 'Todas as Categorias', icon: '🍽️' },
@@ -27,11 +17,20 @@ export default function AdminProdutos() {
     { value: 'sobremesas', label: 'Sobremesas', icon: '🍰' }
   ];
 
+  const carregarProdutos = async () => {
+    setLoading(true);
+    setErro(null);
+    const result = await produtoService.listar();
+    if (result.success) {
+      setProdutos(result.data);
+    } else {
+      setErro(result.error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    setTimeout(() => {
-      setProdutos(produtosMock);
-      setLoading(false);
-    }, 800);
+    carregarProdutos();
   }, []);
 
   const produtosFiltrados = produtos
@@ -49,12 +48,23 @@ export default function AdminProdutos() {
     }).format(value);
   };
 
-  const toggleStatus = (id) => {
-    setProdutos(produtos.map(produto => 
-      produto.id === id 
-        ? { ...produto, ativo: !produto.ativo }
-        : produto
-    ));
+  const toggleStatus = async (id) => {
+    const produto = produtos.find(p => (p._id || p.id) === id);
+    if (!produto) return;
+    const result = await produtoService.atualizar(id, { ativo: !produto.ativo });
+    if (result.success) {
+      setProdutos(produtos.map(p =>
+        (p._id || p.id) === id ? { ...p, ativo: !p.ativo } : p
+      ));
+    }
+  };
+
+  const deletarProduto = async (id) => {
+    if (!window.confirm('Confirma exclusão deste produto?')) return;
+    const result = await produtoService.deletar(id);
+    if (result.success) {
+      setProdutos(produtos.filter(p => (p._id || p.id) !== id));
+    }
   };
 
   const editarProduto = (produto) => {
@@ -67,6 +77,24 @@ export default function AdminProdutos() {
     setModalAberto(true);
   };
 
+    const salvarProduto = async (dados) => {
+      let result;
+      if (produtoEditando) {
+        result = await produtoService.atualizar(produtoEditando._id || produtoEditando.id, dados);
+        if (result.success) {
+          setProdutos(produtos.map(p =>
+            (p._id || p.id) === (produtoEditando._id || produtoEditando.id) ? result.data : p
+          ));
+        }
+      } else {
+        result = await produtoService.criar(dados);
+        if (result.success) {
+          setProdutos([...produtos, result.data]);
+        }
+      }
+      if (result.success) setModalAberto(false);
+    };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-96">
@@ -78,12 +106,107 @@ export default function AdminProdutos() {
     );
   }
 
-  return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-8 text-white">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-          <div>
+  if (erro) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar produtos</h3>
+          <p className="text-gray-600 mb-4">{erro}</p>
+          <button onClick={carregarProdutos} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+    function ModalProduto({ produto, onClose, onSalvar }) {
+      const [form, setForm] = React.useState({
+        nome: produto?.nome || '',
+        categoria: produto?.categoria || 'pasteis',
+        preco: produto?.preco || '',
+        descricao: produto?.descricao || '',
+        ativo: produto?.ativo ?? true,
+      });
+
+      const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+
+      function ModalProduto
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSalvar({ ...form, preco: parseFloat(form.preco) });
+      };
+
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+            <div className="p-6 border-b flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {produto ? '✏️ Editar Produto' : '➕ Novo Produto'}
+              </h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                <input name="nome" value={form.nome} onChange={handleChange} required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <select name="categoria" value={form.categoria} onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                  <option value="pasteis">Pastéis</option>
+                  <option value="bebidas">Bebidas</option>
+                  <option value="sobremesas">Sobremesas</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Preço (R$)</label>
+                <input name="preco" type="number" step="0.01" min="0" value={form.preco} onChange={handleChange} required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                <textarea name="descricao" value={form.descricao} onChange={handleChange} rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div className="flex items-center gap-2">
+                <input name="ativo" type="checkbox" checked={form.ativo} onChange={handleChange} id="ativo" />
+                <label htmlFor="ativo" className="text-sm font-medium text-gray-700">Produto ativo</label>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="submit"
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 font-semibold">
+                  Salvar
+                </button>
+                <button type="button" onClick={onClose}
+                  className="flex-1 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 font-semibold">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+                {modalAberto && (
+                  <ModalProduto
+                    produto={produtoEditando}
+                    onClose={() => setModalAberto(false)}
+                    onSalvar={salvarProduto}
+                  />
+                )}
+              </div>
+            );
+          }
+
+          function ModalProduto
             <h1 className="text-4xl lg:text-5xl font-bold mb-2">🥟 Gestão de Produtos</h1>
             <p className="text-xl text-blue-100">Gerencie seu cardápio e mantenha tudo atualizado</p>
           </div>
@@ -202,7 +325,7 @@ export default function AdminProdutos() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {produtosFiltrados.map(produto => (
-                <tr key={produto.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={produto._id || produto.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-8 py-6">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -213,7 +336,7 @@ export default function AdminProdutos() {
                       </div>
                       <div>
                         <p className="text-lg font-semibold text-gray-900">{produto.nome}</p>
-                        <p className="text-sm text-gray-500">ID: {produto.id}</p>
+                        <p className="text-sm text-gray-500">ID: {produto._id || produto.id}</p>
                       </div>
                     </div>
                   </td>
@@ -238,7 +361,7 @@ export default function AdminProdutos() {
                   </td>
                   <td className="px-8 py-6">
                     <button
-                      onClick={() => toggleStatus(produto.id)}
+                      onClick={() => toggleStatus(produto._id || produto.id)}
                       className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                         produto.ativo 
                           ? 'bg-green-100 text-green-800 hover:bg-green-200'
@@ -256,7 +379,10 @@ export default function AdminProdutos() {
                       >
                         ✏️ Editar
                       </button>
-                      <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium">
+                      <button
+                        onClick={() => deletarProduto(produto._id || produto.id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                      >
                         🗑️ Excluir
                       </button>
                     </div>

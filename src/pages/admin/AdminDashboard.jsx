@@ -1,48 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { relatorioService } from '../../services/relatorioService';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Dados mock do dashboard
-  const statsMock = {
-    vendas_hoje: { valor: 1250.50, variacao: 12.5 },
-    pedidos_hoje: { valor: 45, variacao: 8.2 },
-    produtos_cadastrados: { valor: 24, variacao: 0 },
-    clientes_ativos: { valor: 156, variacao: 5.1 }
-  };
-
-  const pedidosRecentes = [
-    { id: 1, numero: '#001', cliente: 'João Silva', total: 43.50, status: 'preparando', tempo: '10 min' },
-    { id: 2, numero: '#002', cliente: 'Maria Santos', total: 28.00, status: 'entregue', tempo: '25 min' },
-    { id: 3, numero: '#003', cliente: 'Pedro Costa', total: 55.00, status: 'pendente', tempo: '2 min' },
-    { id: 4, numero: '#004', cliente: 'Ana Paula', total: 37.50, status: 'confirmado', tempo: '15 min' },
-    { id: 5, numero: '#005', cliente: 'Carlos Lima', total: 62.00, status: 'preparando', tempo: '5 min' },
-    { id: 6, numero: '#006', cliente: 'Julia Rosa', total: 34.50, status: 'pendente', tempo: '1 min' }
-  ];
-
-  const produtosMaisVendidos = [
-    { nome: 'Pastel de Carne', vendas: 35, receita: 542.50, categoria: 'pasteis' },
-    { nome: 'Pastel de Queijo', vendas: 28, receita: 350.00, categoria: 'pasteis' },
-    { nome: 'Pastel de Frango', vendas: 22, receita: 352.00, categoria: 'pasteis' },
-    { nome: 'Coca-Cola 350ml', vendas: 45, receita: 225.00, categoria: 'bebidas' },
-    { nome: 'Suco de Laranja', vendas: 18, receita: 117.00, categoria: 'bebidas' },
-    { nome: 'Pudim de Leite', vendas: 12, receita: 96.00, categoria: 'sobremesas' }
-  ];
-
-  const alertasOperacionais = [
-    { tipo: 'info', titulo: 'Meta de Vendas', descricao: 'Você já atingiu 78% da meta diária!', tempo: '2 min' },
-    { tipo: 'warning', titulo: 'Estoque Baixo', descricao: 'Massa para pastel com apenas 5 unidades', tempo: '15 min' },
-    { tipo: 'success', titulo: 'Avaliação Positiva', descricao: 'Nova avaliação 5 estrelas recebida!', tempo: '1 hora' },
-    { tipo: 'info', titulo: 'Novo Pedido', descricao: 'Pedido #007 aguardando confirmação', tempo: '30 seg' }
-  ];
+  const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      setStats(statsMock);
+    const carregarDashboard = async () => {
+      setLoading(true);
+      setErro(null);
+      const result = await relatorioService.dashboard();
+      if (result.success) {
+        setStats(result.data);
+      } else {
+        setErro(result.error);
+      }
       setLoading(false);
-    }, 1000);
+    };
+    carregarDashboard();
   }, []);
 
   const formatCurrency = (value) => {
@@ -105,6 +82,32 @@ export default function AdminDashboard() {
     );
   }
 
+  if (erro) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar dashboard</h3>
+          <p className="text-gray-600 mb-4">{erro}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const vendasHoje = stats?.vendas_hoje ?? { valor: 0, variacao: 0 };
+  const pedidosHoje = stats?.pedidos_hoje ?? { valor: 0, variacao: 0 };
+  const produtosCadastrados = stats?.produtos_cadastrados ?? { valor: 0, variacao: 0 };
+  const clientesAtivos = stats?.clientes_ativos ?? { valor: 0, variacao: 0 };
+  const pedidosRecentes = stats?.pedidos_recentes ?? [];
+  const produtosMaisVendidos = stats?.produtos_mais_vendidos ?? [];
+  const alertasOperacionais = stats?.alertas ?? [];
+
   return (
     <div className="space-y-10">
       {/* Header Otimizado */}
@@ -128,13 +131,13 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium text-gray-600">Vendas Hoje</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{formatCurrency(stats.vendas_hoje.valor)}</p>
+              <p className="text-4xl font-bold text-gray-900 mt-2">{formatCurrency(vendasHoje.valor)}</p>
             </div>
             <div className="text-5xl">💰</div>
           </div>
           <div className="mt-6 flex items-center">
-            <span className={`text-lg font-semibold ${stats.vendas_hoje.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {stats.vendas_hoje.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(stats.vendas_hoje.variacao)}%
+            <span className={`text-lg font-semibold ${vendasHoje.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {vendasHoje.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(vendasHoje.variacao)}%
             </span>
             <span className="text-lg text-gray-600 ml-3">vs ontem</span>
           </div>
@@ -145,13 +148,13 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium text-gray-600">Pedidos Hoje</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{stats.pedidos_hoje.valor}</p>
+              <p className="text-4xl font-bold text-gray-900 mt-2">{pedidosHoje.valor}</p>
             </div>
             <div className="text-5xl">📦</div>
           </div>
           <div className="mt-6 flex items-center">
-            <span className={`text-lg font-semibold ${stats.pedidos_hoje.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {stats.pedidos_hoje.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(stats.pedidos_hoje.variacao)}%
+            <span className={`text-lg font-semibold ${pedidosHoje.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {pedidosHoje.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(pedidosHoje.variacao)}%
             </span>
             <span className="text-lg text-gray-600 ml-3">vs ontem</span>
           </div>
@@ -162,7 +165,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium text-gray-600">Produtos</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{stats.produtos_cadastrados.valor}</p>
+              <p className="text-4xl font-bold text-gray-900 mt-2">{produtosCadastrados.valor}</p>
             </div>
             <div className="text-5xl">🥟</div>
           </div>
@@ -178,13 +181,13 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-medium text-gray-600">Clientes Ativos</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{stats.clientes_ativos.valor}</p>
+              <p className="text-4xl font-bold text-gray-900 mt-2">{clientesAtivos.valor}</p>
             </div>
             <div className="text-5xl">👥</div>
           </div>
           <div className="mt-6 flex items-center">
-            <span className={`text-lg font-semibold ${stats.clientes_ativos.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {stats.clientes_ativos.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(stats.clientes_ativos.variacao)}%
+            <span className={`text-lg font-semibold ${clientesAtivos.variacao >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {clientesAtivos.variacao >= 0 ? '↗️' : '↘️'} {Math.abs(clientesAtivos.variacao)}%
             </span>
             <span className="text-lg text-gray-600 ml-3">este mês</span>
           </div>

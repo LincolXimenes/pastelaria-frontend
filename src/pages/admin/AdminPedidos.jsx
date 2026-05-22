@@ -1,42 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { pedidoService } from '../../services/pedidoService';
 
 export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroData, setFiltroData] = useState('hoje');
-
-  // Dados mock de pedidos
-  const pedidosMock = [
-    {
-      id: 1, numero: '#001', cliente: 'João Silva', email: 'joao@email.com', telefone: '(11) 99999-0001',
-      total: 43.50, status: 'preparando', data: '2025-01-26', hora: '14:30',
-      endereco: 'Rua das Flores, 123 - Centro', observacoes: 'Sem cebola',
-      itens: [
-        { nome: 'Pastel de Carne', quantidade: 2, preco: 15.50 },
-        { nome: 'Coca-Cola 350ml', quantidade: 1, preco: 5.00 }
-      ]
-    },
-    {
-      id: 2, numero: '#002', cliente: 'Maria Santos', email: 'maria@email.com', telefone: '(11) 99999-0002',
-      total: 28.00, status: 'entregue', data: '2025-01-26', hora: '13:45',
-      endereco: 'Av. Principal, 456 - Jardim', observacoes: '',
-      itens: [
-        { nome: 'Pastel de Queijo', quantidade: 2, preco: 12.50 },
-        { nome: 'Suco de Laranja', quantidade: 1, preco: 6.50 }
-      ]
-    },
-    {
-      id: 3, numero: '#003', cliente: 'Pedro Costa', email: 'pedro@email.com', telefone: '(11) 99999-0003',
-      total: 55.00, status: 'pendente', data: '2025-01-26', hora: '15:15',
-      endereco: 'Rua Nova, 789 - Vila Nova', observacoes: 'Entregar após 19h',
-      itens: [
-        { nome: 'Pastel de Pizza', quantidade: 2, preco: 18.00 },
-        { nome: 'Pastel de Frango', quantidade: 1, preco: 16.00 },
-        { nome: 'Coca-Cola 350ml', quantidade: 1, preco: 5.00 }
-      ]
-    }
-  ];
 
   const statusConfig = {
     pendente: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-800', icon: '⏳' },
@@ -47,19 +17,37 @@ export default function AdminPedidos() {
     cancelado: { label: 'Cancelado', color: 'bg-red-100 text-red-800', icon: '❌' }
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setPedidos(pedidosMock);
-      setLoading(false);
-    }, 800);
-  }, []);
+  const carregarPedidos = async () => {
+    setLoading(true);
+    setErro(null);
+    const params = {};
+    if (filtroStatus !== 'todos') params.status = filtroStatus;
+    if (filtroData === 'hoje') {
+      params.data = new Date().toISOString().split('T')[0];
+    } else if (filtroData === 'semana') {
+      const d = new Date();
+      d.setDate(d.getDate() - 7);
+      params.dataInicio = d.toISOString().split('T')[0];
+    } else if (filtroData === 'mes') {
+      const d = new Date();
+      d.setDate(1);
+      params.dataInicio = d.toISOString().split('T')[0];
+    }
+    const result = await pedidoService.listar(params);
+    if (result.success) {
+      setPedidos(result.data);
+    } else {
+      setErro(result.error);
+    }
+    setLoading(false);
+  };
 
-  const pedidosFiltrados = pedidos.filter(pedido => {
-    const matchStatus = filtroStatus === 'todos' || pedido.status === filtroStatus;
-    const matchData = filtroData === 'todos' || 
-      (filtroData === 'hoje' && pedido.data === '2025-01-26');
-    return matchStatus && matchData;
-  });
+  useEffect(() => {
+    carregarPedidos();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtroStatus, filtroData]);
+
+  const pedidosFiltrados = pedidos;
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -68,12 +56,15 @@ export default function AdminPedidos() {
     }).format(value);
   };
 
-  const atualizarStatus = (id, novoStatus) => {
-    setPedidos(pedidos.map(pedido => 
-      pedido.id === id 
-        ? { ...pedido, status: novoStatus }
-        : pedido
-    ));
+  const atualizarStatus = async (id, novoStatus) => {
+    const result = await pedidoService.atualizarStatus(id, novoStatus);
+    if (result.success) {
+      setPedidos(pedidos.map(pedido =>
+        (pedido._id || pedido.id) === id
+          ? { ...pedido, status: novoStatus }
+          : pedido
+      ));
+    }
   };
 
   if (loading) {
@@ -82,6 +73,21 @@ export default function AdminPedidos() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Carregando pedidos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar pedidos</h3>
+          <p className="text-gray-600 mb-4">{erro}</p>
+          <button onClick={carregarPedidos} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+            Tentar novamente
+          </button>
         </div>
       </div>
     );
@@ -186,7 +192,7 @@ export default function AdminPedidos() {
       {/* Lista de Pedidos */}
       <div className="space-y-6">
         {pedidosFiltrados.map(pedido => (
-          <div key={pedido.id} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div key={pedido._id || pedido.id} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             {/* Header do Pedido */}
             <div className="bg-gray-50 px-8 py-6 border-b">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -263,7 +269,7 @@ export default function AdminPedidos() {
               <div className="mt-8 pt-6 border-t flex flex-wrap gap-3">
                 {pedido.status === 'pendente' && (
                   <button
-                    onClick={() => atualizarStatus(pedido.id, 'confirmado')}
+                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'confirmado')}
                     className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                   >
                     ✅ Confirmar Pedido
@@ -272,7 +278,7 @@ export default function AdminPedidos() {
                 
                 {pedido.status === 'confirmado' && (
                   <button
-                    onClick={() => atualizarStatus(pedido.id, 'preparando')}
+                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'preparando')}
                     className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-semibold"
                   >
                     👨‍🍳 Iniciar Preparo
@@ -281,7 +287,7 @@ export default function AdminPedidos() {
                 
                 {pedido.status === 'preparando' && (
                   <button
-                    onClick={() => atualizarStatus(pedido.id, 'saiu_entrega')}
+                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'saiu_entrega')}
                     className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
                   >
                     🚚 Saiu para Entrega
@@ -290,7 +296,7 @@ export default function AdminPedidos() {
                 
                 {pedido.status === 'saiu_entrega' && (
                   <button
-                    onClick={() => atualizarStatus(pedido.id, 'entregue')}
+                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'entregue')}
                     className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
                   >
                     📦 Marcar como Entregue
@@ -301,9 +307,14 @@ export default function AdminPedidos() {
                   📞 Ligar para Cliente
                 </button>
 
-                <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold">
-                  ❌ Cancelar Pedido
-                </button>
+                {['pendente', 'confirmado'].includes(pedido.status) && (
+                  <button
+                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'cancelado')}
+                    className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold"
+                  >
+                    ❌ Cancelar Pedido
+                  </button>
+                )}
               </div>
             </div>
           </div>

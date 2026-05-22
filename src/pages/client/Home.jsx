@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { produtoService } from '../../services/produtoService';
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [destaques, setDestaques] = useState([]);
 
-  const mockItems = [
-    { id: 1, title: 'Pastel de Carne', description: 'Com bastante recheio', preco: 15.50 },
-    { id: 2, title: 'Pastel de Queijo', description: 'Derretido e crocante', preco: 12.50 },
-    { id: 3, title: 'Pastel de Frango', description: 'Com catupiry', preco: 16.00 },
-    { id: 4, title: 'Pastel de Pizza', description: 'Molho especial', preco: 18.00 },
-    { id: 5, title: 'Pastel Doce', description: 'Banana com canela', preco: 14.00 },
-    { id: 6, title: 'Coca-Cola', description: 'Geladinha 350ml', preco: 5.00 },
-  ];
+  useEffect(() => {
+    const carregarDestaques = async () => {
+      const result = await produtoService.listar({ ativo: true });
+      if (result.success) {
+        setDestaques(result.data.slice(0, 6));
+      }
+    };
+    carregarDestaques();
+  }, []);
 
   return (
     <div className="space-y-20">
@@ -37,19 +39,21 @@ export default function Home() {
         <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 text-center mb-16">Nossos Pastéis Favoritos</h2>
         {/* Grid para telas grandes: 6 colunas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
-          {mockItems.map(item => (
-            <div key={item.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          {destaques.map(item => (
+            <div key={item._id || item.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="h-48 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
-                <span className="text-6xl">🥟</span>
+                <span className="text-6xl">
+                  {item.categoria === 'bebidas' ? '🥤' : item.categoria === 'sobremesas' ? '🍰' : '🥟'}
+                </span>
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{item.nome}</h3>
                   <span className="text-lg font-bold text-yellow-600">
-                    R$ {item.preco.toFixed(2)}
+                    R$ {Number(item.preco).toFixed(2)}
                   </span>
                 </div>
-                <p className="text-gray-600 mb-4 text-sm">{item.description}</p>
+                <p className="text-gray-600 mb-4 text-sm">{item.descricao}</p>
                 <button className="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors font-medium">
                   Adicionar 🛒
                 </button>

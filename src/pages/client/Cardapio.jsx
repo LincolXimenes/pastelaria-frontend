@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { produtoService } from '../../services/produtoService';
 
 export default function Cardapio() {
   const [searchParams] = useSearchParams();
@@ -10,18 +11,7 @@ export default function Cardapio() {
   const [ordenacao, setOrdenacao] = useState('nome');
   const [busca, setBusca] = useState('');
   const [loading, setLoading] = useState(true);
-
-  // Dados mock enquanto não temos backend
-  const produtosMock = [
-    { id: 1, nome: 'Pastel de Carne', preco: 15.50, categoria: 'pasteis', descricao: 'Delicioso pastel com recheio generoso de carne moída temperada' },
-    { id: 2, nome: 'Pastel de Queijo', preco: 12.50, categoria: 'pasteis', descricao: 'Crocante pastel recheado com queijo derretido' },
-    { id: 3, nome: 'Pastel de Frango', preco: 16.00, categoria: 'pasteis', descricao: 'Saboroso pastel com frango desfiado e catupiry' },
-    { id: 4, nome: 'Pastel de Pizza', preco: 18.00, categoria: 'pasteis', descricao: 'Pastel recheado com molho de tomate, queijo e orégano' },
-    { id: 5, nome: 'Coca-Cola 350ml', preco: 5.00, categoria: 'bebidas', descricao: 'Refrigerante gelado' },
-    { id: 6, nome: 'Suco de Laranja', preco: 6.50, categoria: 'bebidas', descricao: 'Suco natural de laranja' },
-    { id: 7, nome: 'Pudim de Leite', preco: 8.00, categoria: 'sobremesas', descricao: 'Cremoso pudim caseiro' },
-    { id: 8, nome: 'Brigadeiro', preco: 3.50, categoria: 'sobremesas', descricao: 'Doce tradicional brasileiro' }
-  ];
+  const [erro, setErro] = useState(null);
 
   const categorias = [
     { value: '', label: 'Todas as Categorias', icon: '🍽️' },
@@ -31,12 +21,18 @@ export default function Cardapio() {
   ];
 
   useEffect(() => {
-    // Simular carregamento
-    setLoading(true);
-    setTimeout(() => {
-      setProdutos(produtosMock);
+    const carregarProdutos = async () => {
+      setLoading(true);
+      setErro(null);
+      const result = await produtoService.listar({ ativo: true });
+      if (result.success) {
+        setProdutos(result.data);
+      } else {
+        setErro(result.error);
+      }
       setLoading(false);
-    }, 800);
+    };
+    carregarProdutos();
   }, []);
 
   // Filtrar e ordenar produtos
@@ -71,6 +67,24 @@ export default function Cardapio() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Carregando cardápio...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div className="flex justify-center items-center min-h-96">
+        <div className="text-center">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar cardápio</h3>
+          <p className="text-gray-600 mb-4">{erro}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
+          >
+            Tentar novamente
+          </button>
         </div>
       </div>
     );

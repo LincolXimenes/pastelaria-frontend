@@ -11,6 +11,8 @@ import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProdutos from './pages/admin/AdminProdutos';
 import AdminPedidos from './pages/admin/AdminPedidos';
+import AdminRelatorios from './pages/admin/AdminRelatorios';
+import AdminClientes from './pages/admin/AdminClientes';
 
 // Componente para proteger rotas admin
 function ProtectedRoute({ children }) {
@@ -83,6 +85,23 @@ function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <AdminPedidos />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+
+            {/* Redirect /admin para /admin/dashboard */}
+            <Route path="/admin/relatorios" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminRelatorios />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/admin/clientes" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminClientes />
                 </AdminLayout>
               </ProtectedRoute>
             } />

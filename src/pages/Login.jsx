@@ -27,36 +27,6 @@ export default function Login() {
     setLoading(false);
   };
 
-  // Função para testar a conexão diretamente
-  const testarConexao = async () => {
-    try {
-      setAlert(null);
-      
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiBase}/api/users/login`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ 
-          email: email || 'teste@teste.com', 
-          senha: password || '123456' 
-        })
-      });
-
-      const data = await response.text();
-      
-      if (response.ok) {
-        setAlert({ type: 'success', message: 'Conexão OK! Dados: ' + data });
-      } else {
-        setAlert({ type: 'error', message: `Erro ${response.status}: ${data}` });
-      }
-    } catch (error) {
-      setAlert({ type: 'error', message: 'Erro de conexão: ' + error.message });
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">
@@ -67,9 +37,6 @@ export default function Login() {
           <h2 className="text-center text-3xl font-extrabold text-gray-900">
             Pastelaria Delícia - Admin
           </h2>
-          <p className="text-center text-sm text-gray-600 mt-2">
-            API: {import.meta.env.VITE_API_URL || 'http://localhost:5000'}
-          </p>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -100,6 +67,7 @@ export default function Login() {
               required
               className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
               placeholder="Email (admin@pastelaria.com)"
+                            placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -114,6 +82,7 @@ export default function Login() {
               required
               className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
               placeholder="Senha (123456)"
+                            placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -135,20 +104,8 @@ export default function Login() {
                 </>
               ) : 'Entrar no Painel Admin'}
             </button>
-            
-            <button
-              type="button"
-              onClick={testarConexao}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              🔧 Testar Conexão Backend
-            </button>
           </div>
 
-          <div className="text-center text-sm text-gray-500">
-            <p>Credenciais padrão:</p>
-            <p><strong>admin@pastelaria.com</strong> / <strong>123456</strong></p>
-          </div>
         </form>
       </div>
     </div>
