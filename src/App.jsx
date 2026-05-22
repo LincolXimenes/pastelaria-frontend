@@ -89,7 +89,6 @@ function App() {
               </ProtectedRoute>
             } />
 
-            {/* Redirect /admin para /admin/dashboard */}
             <Route path="/admin/relatorios" element={
               <ProtectedRoute>
                 <AdminLayout>

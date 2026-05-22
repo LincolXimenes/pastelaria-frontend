@@ -20,18 +20,19 @@ export default function Cardapio() {
     { value: 'sobremesas', label: 'Sobremesas', icon: '🍰' }
   ];
 
+  const carregarProdutos = async () => {
+    setLoading(true);
+    setErro(null);
+    const result = await produtoService.listar({ ativo: true });
+    if (result.success) {
+      setProdutos(result.data);
+    } else {
+      setErro(result.error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const carregarProdutos = async () => {
-      setLoading(true);
-      setErro(null);
-      const result = await produtoService.listar({ ativo: true });
-      if (result.success) {
-        setProdutos(result.data);
-      } else {
-        setErro(result.error);
-      }
-      setLoading(false);
-    };
     carregarProdutos();
   }, []);
 
@@ -80,7 +81,7 @@ export default function Cardapio() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar cardápio</h3>
           <p className="text-gray-600 mb-4">{erro}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={carregarProdutos}
             className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
           >
             Tentar novamente

@@ -40,18 +40,19 @@ export default function MeusPedidos() {
     }
   };
 
+  const carregarPedidos = async () => {
+    setLoading(true);
+    setErro(null);
+    const result = await pedidoService.listar();
+    if (result.success) {
+      setPedidos(result.data);
+    } else {
+      setErro(result.error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const carregarPedidos = async () => {
-      setLoading(true);
-      setErro(null);
-      const result = await pedidoService.listar();
-      if (result.success) {
-        setPedidos(result.data);
-      } else {
-        setErro(result.error);
-      }
-      setLoading(false);
-    };
     carregarPedidos();
   }, []);
 
@@ -92,7 +93,7 @@ export default function MeusPedidos() {
           <div className="text-6xl mb-4">⚠️</div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar pedidos</h3>
           <p className="text-gray-600 mb-4">{erro}</p>
-          <button onClick={() => window.location.reload()} className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
+          <button onClick={carregarPedidos} className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
             Tentar novamente
           </button>
         </div>

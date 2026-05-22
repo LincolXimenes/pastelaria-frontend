@@ -25,7 +25,6 @@ export default function AdminLayout({ children }) {
     { path: '/admin/pedidos', icon: '📦', label: 'Pedidos' },
     { path: '/admin/relatorios', icon: '📈', label: 'Relatórios' },
     { path: '/admin/clientes', icon: '👥', label: 'Clientes' },
-    { path: '/admin/configuracoes', icon: '⚙️', label: 'Configurações' }
   ];
 
   return (

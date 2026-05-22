@@ -7,18 +7,19 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
+  const carregarDashboard = async () => {
+    setLoading(true);
+    setErro(null);
+    const result = await relatorioService.dashboard();
+    if (result.success) {
+      setStats(result.data);
+    } else {
+      setErro(result.error);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const carregarDashboard = async () => {
-      setLoading(true);
-      setErro(null);
-      const result = await relatorioService.dashboard();
-      if (result.success) {
-        setStats(result.data);
-      } else {
-        setErro(result.error);
-      }
-      setLoading(false);
-    };
     carregarDashboard();
   }, []);
 
@@ -90,7 +91,7 @@ export default function AdminDashboard() {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar dashboard</h3>
           <p className="text-gray-600 mb-4">{erro}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={carregarDashboard}
             className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
           >
             Tentar novamente

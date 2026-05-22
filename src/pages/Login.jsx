@@ -66,8 +66,7 @@ export default function Login() {
               type="email"
               required
               className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-              placeholder="Email (admin@pastelaria.com)"
-                            placeholder="Email"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -81,8 +80,7 @@ export default function Login() {
               type="password"
               required
               className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-              placeholder="Senha (123456)"
-                            placeholder="Senha"
+              placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
