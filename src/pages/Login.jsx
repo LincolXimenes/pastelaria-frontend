@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Alert from '../components/shared/Alert';
 
 export default function Login() {
-  console.log('Variáveis de ambiente:', {
-    VITE_API_URL: import.meta.env.VITE_API_URL,
-    MODE: import.meta.env.MODE,
-    DEV: import.meta.env.DEV
-  });
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,15 +16,11 @@ export default function Login() {
     setLoading(true);
     setAlert(null);
 
-    console.log('Iniciando login...');
     const result = await login(email, password);
 
     if (result.success) {
-      console.log('Login bem-sucedido, redirecionando para admin dashboard...');
-      // CORRIGIR: Redirecionar para a rota admin correta
       navigate('/admin/dashboard');
     } else {
-      console.log('Erro no login:', result.error);
       setAlert({ type: 'error', message: result.error });
     }
 
@@ -42,9 +31,9 @@ export default function Login() {
   const testarConexao = async () => {
     try {
       setAlert(null);
-      console.log('Testando conexão com o backend...');
       
-      const response = await fetch('http://localhost:5000/users/login', {
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiBase}/api/users/login`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -52,13 +41,11 @@ export default function Login() {
         },
         body: JSON.stringify({ 
           email: email || 'teste@teste.com', 
-          password: password || '123456' 
+          senha: password || '123456' 
         })
       });
-      
-      console.log('Status da resposta:', response.status);
+
       const data = await response.text();
-      console.log('Dados da resposta:', data);
       
       if (response.ok) {
         setAlert({ type: 'success', message: 'Conexão OK! Dados: ' + data });
@@ -66,7 +53,6 @@ export default function Login() {
         setAlert({ type: 'error', message: `Erro ${response.status}: ${data}` });
       }
     } catch (error) {
-      console.error('Erro na conexão:', error);
       setAlert({ type: 'error', message: 'Erro de conexão: ' + error.message });
     }
   };
