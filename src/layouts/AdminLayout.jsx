@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import ThemeToggle from '../components/shared/ThemeToggle';
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
@@ -8,11 +9,10 @@ export default function AdminLayout({ children }) {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isActive = (path) => {
-    return location.pathname === path 
-      ? 'bg-yellow-600 text-white shadow-lg' 
-      : 'text-gray-700 hover:bg-yellow-50 hover:text-yellow-600';
-  };
+  const isActive = (path) =>
+    location.pathname === path
+      ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold'
+      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100';
 
   const handleLogout = async () => {
     await logout();
@@ -21,127 +21,105 @@ export default function AdminLayout({ children }) {
 
   const menuItems = [
     { path: '/admin/dashboard', icon: '📊', label: 'Dashboard' },
-    { path: '/admin/produtos', icon: '🥟', label: 'Produtos' },
-    { path: '/admin/pedidos', icon: '📦', label: 'Pedidos' },
-    { path: '/admin/relatorios', icon: '📈', label: 'Relatórios' },
-    { path: '/admin/clientes', icon: '👥', label: 'Clientes' },
+    { path: '/admin/produtos',  icon: '🥟', label: 'Produtos' },
+    { path: '/admin/pedidos',   icon: '📦', label: 'Pedidos' },
+    { path: '/admin/relatorios',icon: '📈', label: 'Relatórios' },
+    { path: '/admin/clientes',  icon: '👥', label: 'Clientes' },
   ];
 
+  const currentPage = menuItems.find(i => i.path === location.pathname)?.label || 'Admin';
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className={`bg-white shadow-xl transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'} lg:w-64`}>
-        <div className="p-6">
-          {/* Logo */}
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="text-3xl">🥟</div>
-            <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-              <h1 className="text-xl font-bold text-yellow-600">Admin Panel</h1>
-              <p className="text-xs text-gray-500">Pastelaria Delícia</p>
-            </div>
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-950">
+      {/* ── Sidebar ──────────────────────────────────────── */}
+      <aside className={`
+        flex-shrink-0 flex flex-col
+        bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800
+        transition-all duration-300
+        ${sidebarOpen ? 'w-60' : 'w-16'} lg:w-60
+      `}>
+        {/* Logo */}
+        <div className="h-16 flex items-center gap-3 px-4 border-b border-gray-100 dark:border-gray-800">
+          <span className="text-2xl flex-shrink-0">🥟</span>
+          <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">Admin Panel</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Pastelaria Delícia</p>
           </div>
-
-          {/* Navigation */}
-          <nav className="space-y-2">
-            {menuItems.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive(item.path)}`}
-                title={item.label}
-              >
-                <span className="text-xl">{item.icon}</span>
-                <span className={`font-medium ${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-          </nav>
         </div>
 
-        {/* User Info & Logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t">
-          <div className={`flex items-center space-x-3 mb-4 ${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-            <div className="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold">
-                {user?.email?.charAt(0).toUpperCase() || 'A'}
-              </span>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{user?.email || 'Admin'}</p>
-              <p className="text-xs text-gray-500">Administrador</p>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
+        {/* Nav */}
+        <nav className="flex-1 p-3 space-y-1">
+          {menuItems.map(item => (
             <Link
-              to="/"
-              className="flex items-center space-x-3 px-4 py-2 text-gray-600 hover:text-yellow-600 transition-colors"
-              title="Ver Site"
+              key={item.path}
+              to={item.path}
+              title={item.label}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive(item.path)}`}
             >
-              <span className="text-lg">🌐</span>
-              <span className={`text-sm ${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-                Ver Site
-              </span>
+              <span className="text-base flex-shrink-0">{item.icon}</span>
+              <span className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>{item.label}</span>
             </Link>
-            
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-3 px-4 py-2 text-red-600 hover:text-red-700 transition-colors w-full text-left"
-              title="Logout"
-            >
-              <span className="text-lg">🚪</span>
-              <span className={`text-sm ${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-                Sair
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+          ))}
+        </nav>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Header */}
-        <header className="bg-white shadow-sm border-b h-16 flex items-center justify-between px-6">
-          {/* Mobile Sidebar Toggle */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        {/* User + actions */}
+        <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
+          <Link
+            to="/"
+            title="Ver site"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <span className="text-base flex-shrink-0">🌐</span>
+            <span className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>Ver site</span>
+          </Link>
+          <button
+            onClick={handleLogout}
+            title="Sair"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+          >
+            <span className="text-base flex-shrink-0">🚪</span>
+            <span className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>Sair</span>
           </button>
+        </div>
+      </aside>
 
-          {/* Page Title */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              {menuItems.find(item => item.path === location.pathname)?.label || 'Admin'}
-            </h2>
+      {/* ── Main area ────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar */}
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6
+          bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setSidebarOpen(o => !o)}
+              aria-label="Abrir menu"
+              className="lg:hidden btn-ghost p-2 rounded-lg"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">{currentPage}</h2>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Notifications */}
-            <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5-5 5-5H9l5 5-5 5z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-gray-200 dark:border-gray-700">
+              <div className="w-7 h-7 bg-amber-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-semibold">
+                  {user?.email?.charAt(0).toUpperCase() || 'A'}
+                </span>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {user?.email?.split('@')[0] || 'Admin'}
               </span>
-            </button>
-
-            {/* User Menu */}
-            <div className="text-sm text-gray-600">
-              Olá, <span className="font-medium">{user?.email?.split('@')[0] || 'Admin'}</span>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-[1400px] mx-auto">
+        {/* Content */}
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+          <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </main>

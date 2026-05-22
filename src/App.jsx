@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import ClientLayout from './layouts/ClientLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/client/Home';
@@ -31,9 +32,9 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="App">
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
           <Routes>
             {/* Rotas do Cliente */}
             <Route path="/" element={
@@ -111,9 +112,9 @@ function App() {
             {/* Redirect padrão */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

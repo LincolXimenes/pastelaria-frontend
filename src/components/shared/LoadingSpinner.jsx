@@ -1,17 +1,26 @@
-export default function LoadingSpinner({ size = 'md', message = 'Carregando...' }) {
-  const sizes = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
-    xl: 'h-16 w-16'
-  };
+export default function LoadingSpinner({ size = 'md', message = 'Carregando…', fullPage = false }) {
+  const sizes = { sm: 'w-4 h-4', md: 'w-8 h-8', lg: 'w-12 h-12', xl: 'w-16 h-16' };
+
+  const content = (
+    <div className="flex flex-col items-center justify-center gap-3 p-8">
+      <div className={`spinner ${sizes[size]} border-2`} />
+      {message && (
+        <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
+      )}
+    </div>
+  );
+
+  if (fullPage) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm z-50">
+        {content}
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col justify-center items-center p-8">
-      <div className={`${sizes[size]} border-4 border-gray-200 border-t-yellow-600 rounded-full animate-spin mb-2`}></div>
-      {message && (
-        <p className="text-gray-600 text-sm">{message}</p>
-      )}
+    <div className="flex items-center justify-center min-h-64">
+      {content}
     </div>
   );
 }

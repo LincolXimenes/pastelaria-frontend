@@ -34,116 +34,129 @@ export default function AdminRelatorios() {
   };
 
   return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-8 text-white">
-        <h1 className="text-4xl lg:text-5xl font-bold mb-2">📈 Relatórios</h1>
-        <p className="text-xl text-purple-100">Análise de vendas e performance por período</p>
+    <div className="space-y-6">
+      {/* Banner */}
+      <div className="page-banner">
+        <div>
+          <h1 className="page-title">Relatórios</h1>
+          <p className="page-subtitle">Análise de vendas e performance por período</p>
+        </div>
       </div>
 
-      {/* Filtros de período */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">📅 Filtrar por Período</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+      {/* Filtros */}
+      <div className="section-card">
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">PERÍODO</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-3">Data Início</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Data início</label>
             <input
               type="date"
               value={dataInicio}
               onChange={(e) => setDataInicio(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
+              className="input"
             />
           </div>
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-3">Data Fim</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Data fim</label>
             <input
               type="date"
               value={dataFim}
               onChange={(e) => setDataFim(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
+              className="input"
             />
           </div>
           <button
             onClick={buscarRelatorios}
             disabled={loading}
-            className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold text-lg disabled:opacity-50"
+            className="btn-primary"
           >
-            {loading ? 'Carregando...' : '🔍 Gerar Relatório'}
+            {loading ? (
+              <><span className="spinner w-4 h-4 border-2" /> Gerando…</>
+            ) : 'Gerar relatório'}
           </button>
         </div>
       </div>
 
       {erro && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-6">
-          <p className="font-semibold">Erro ao carregar relatório:</p>
-          <p>{erro}</p>
+        <div className="px-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-sm text-red-700 dark:text-red-400">
+          {erro}
         </div>
       )}
 
       {relatorioVendas && (
         <>
-          {/* Cards de resumo */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <p className="text-lg font-medium text-gray-600">Total de Vendas</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{formatCurrency(relatorioVendas.total_vendas)}</p>
+          {/* Resumo */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="stat-card">
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Total vendas</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(relatorioVendas.total_vendas)}</p>
+              </div>
+              <span className="text-2xl">💵</span>
             </div>
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <p className="text-lg font-medium text-gray-600">Pedidos no Período</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{relatorioVendas.total_pedidos ?? 0}</p>
+            <div className="stat-card">
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Pedidos</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{relatorioVendas.total_pedidos ?? 0}</p>
+              </div>
+              <span className="text-2xl">📦</span>
             </div>
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <p className="text-lg font-medium text-gray-600">Ticket Médio</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{formatCurrency(relatorioVendas.ticket_medio)}</p>
+            <div className="stat-card">
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Ticket médio</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">{formatCurrency(relatorioVendas.ticket_medio)}</p>
+              </div>
+              <span className="text-2xl">🎯</span>
             </div>
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <p className="text-lg font-medium text-gray-600">Itens Vendidos</p>
-              <p className="text-4xl font-bold text-gray-900 mt-2">{relatorioVendas.total_itens ?? 0}</p>
+            <div className="stat-card">
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Itens vendidos</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{relatorioVendas.total_itens ?? 0}</p>
+              </div>
+              <span className="text-2xl">🥟</span>
             </div>
           </div>
 
           {/* Produtos mais vendidos */}
           {produtosMaisVendidos.length > 0 && (
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100">
-              <div className="p-8 border-b border-gray-100">
-                <h2 className="text-2xl font-bold text-gray-900">🏆 Produtos Mais Vendidos</h2>
+            <div className="table-wrapper">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                <h2 className="text-sm font-semibold text-gray-900 dark:text-white">🏆 Produtos Mais Vendidos</h2>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-8 py-4 text-left text-lg font-semibold text-gray-900">#</th>
-                      <th className="px-8 py-4 text-left text-lg font-semibold text-gray-900">Produto</th>
-                      <th className="px-8 py-4 text-left text-lg font-semibold text-gray-900">Vendas</th>
-                      <th className="px-8 py-4 text-left text-lg font-semibold text-gray-900">Receita</th>
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="table-header">#</th>
+                    <th className="table-header">Produto</th>
+                    <th className="table-header">Vendas</th>
+                    <th className="table-header">Receita</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {produtosMaisVendidos.map((produto, index) => (
+                    <tr key={produto._id || index} className="table-row">
+                      <td className="px-4 py-3">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                          index === 0 ? 'bg-amber-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-300'
+                        }`}>{index + 1}</span>
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">{produto.nome}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{produto.vendas} unid.</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">{formatCurrency(produto.receita)}</td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {produtosMaisVendidos.map((produto, index) => (
-                      <tr key={produto._id || index} className="hover:bg-gray-50">
-                        <td className="px-8 py-4">
-                          <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white inline-flex ${
-                            index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-500' : 'bg-gray-300'
-                          }`}>{index + 1}</span>
-                        </td>
-                        <td className="px-8 py-4 font-semibold text-gray-900">{produto.nome}</td>
-                        <td className="px-8 py-4 text-gray-700">{produto.vendas} unid.</td>
-                        <td className="px-8 py-4 font-bold text-gray-900">{formatCurrency(produto.receita)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </>
       )}
 
       {!relatorioVendas && !loading && !erro && (
-        <div className="text-center py-16 bg-white rounded-2xl shadow-xl border border-gray-100">
-          <div className="text-8xl mb-6">📊</div>
-          <h3 className="text-2xl font-semibold text-gray-900 mb-4">Selecione um período</h3>
-          <p className="text-gray-600">Escolha as datas e clique em "Gerar Relatório" para visualizar os dados.</p>
+        <div className="section-card flex flex-col items-center justify-center py-16 text-center">
+          <span className="text-5xl mb-4">📊</span>
+          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Nenhum relatório gerado</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Escolha as datas e clique em “Gerar relatório”.</p>
         </div>
       )}
     </div>

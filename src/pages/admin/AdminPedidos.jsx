@@ -69,251 +69,176 @@ export default function AdminPedidos() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando pedidos...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-64">
+        <div className="spinner w-8 h-8 border-2"></div>
       </div>
     );
   }
 
   if (erro) {
     return (
-      <div className="flex justify-center items-center min-h-96">
+      <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar pedidos</h3>
-          <p className="text-gray-600 mb-4">{erro}</p>
-          <button onClick={carregarPedidos} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-            Tentar novamente
-          </button>
+          <p className="text-4xl mb-3">⚠️</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
+          <button onClick={carregarPedidos} className="btn-primary">Tentar novamente</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-8 text-white">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-2">📦 Gestão de Pedidos</h1>
-            <p className="text-xl text-green-100">Acompanhe e gerencie todos os pedidos em tempo real</p>
-          </div>
-          <div className="mt-6 lg:mt-0 text-right">
-            <div className="text-3xl lg:text-4xl font-bold">{pedidosFiltrados.length}</div>
-            <div className="text-lg text-green-100">Pedidos {filtroStatus === 'todos' ? 'Total' : statusConfig[filtroStatus]?.label}</div>
-          </div>
+    <div className="space-y-6">
+      {/* Banner */}
+      <div className="page-banner">
+        <div>
+          <h1 className="page-title">Pedidos</h1>
+          <p className="page-subtitle">Acompanhe e gerencie todos os pedidos</p>
         </div>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {pedidosFiltrados.length} pedido(s)
+        </span>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium text-gray-600">Pedidos Hoje</p>
-              <p className="text-4xl font-bold text-gray-900">{pedidos.length}</p>
-            </div>
-            <div className="text-5xl">📊</div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="stat-card">
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{pedidos.length}</p>
           </div>
+          <span className="text-2xl">📊</span>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium text-gray-600">Pendentes</p>
-              <p className="text-4xl font-bold text-yellow-600">{pedidos.filter(p => p.status === 'pendente').length}</p>
-            </div>
-            <div className="text-5xl">⏳</div>
+        <div className="stat-card">
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Pendentes</p>
+            <p className="text-2xl font-bold text-amber-500">{pedidos.filter(p => p.status === 'pendente').length}</p>
           </div>
+          <span className="text-2xl">⏳</span>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium text-gray-600">Em Preparo</p>
-              <p className="text-4xl font-bold text-orange-600">{pedidos.filter(p => p.status === 'preparando').length}</p>
-            </div>
-            <div className="text-5xl">👨‍🍳</div>
+        <div className="stat-card">
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Em preparo</p>
+            <p className="text-2xl font-bold text-orange-500">{pedidos.filter(p => p.status === 'preparando').length}</p>
           </div>
+          <span className="text-2xl">👨‍🍳</span>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-medium text-gray-600">Faturamento</p>
-              <p className="text-3xl font-bold text-green-600">
-                {formatCurrency(pedidos.reduce((total, p) => total + p.total, 0))}
-              </p>
-            </div>
-            <div className="text-5xl">💰</div>
+        <div className="stat-card">
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Faturamento</p>
+            <p className="text-lg font-bold text-green-600">{formatCurrency(pedidos.reduce((t, p) => t + p.total, 0))}</p>
           </div>
+          <span className="text-2xl">💰</span>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="section-card">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-3">📋 Status</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Status</label>
             <select
               value={filtroStatus}
               onChange={(e) => setFiltroStatus(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg"
+              className="input"
             >
-              <option value="todos">🍽️ Todos os Status</option>
+              <option value="todos">Todos os status</option>
               {Object.entries(statusConfig).map(([status, config]) => (
-                <option key={status} value={status}>
-                  {config.icon} {config.label}
-                </option>
+                <option key={status} value={status}>{config.icon} {config.label}</option>
               ))}
             </select>
           </div>
-
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-3">📅 Período</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Período</label>
             <select
               value={filtroData}
               onChange={(e) => setFiltroData(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg"
+              className="input"
             >
-              <option value="hoje">📅 Hoje</option>
-              <option value="semana">📆 Esta Semana</option>
-              <option value="mes">🗓️ Este Mês</option>
-              <option value="todos">🕐 Todos os Períodos</option>
+              <option value="hoje">Hoje</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mês</option>
+              <option value="todos">Todos os períodos</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Lista de Pedidos */}
-      <div className="space-y-6">
+      {/* Pedidos */}
+      <div className="space-y-4">
         {pedidosFiltrados.map(pedido => (
-          <div key={pedido._id || pedido.id} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            {/* Header do Pedido */}
-            <div className="bg-gray-50 px-8 py-6 border-b">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">{statusConfig[pedido.status].icon}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900">{pedido.numero}</h3>
-                    <p className="text-lg text-gray-600">{pedido.cliente} • {pedido.data} às {pedido.hora}</p>
-                  </div>
+          <div key={pedido._id || pedido.id} className="card overflow-hidden">
+            {/* Header do pedido */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <span className="text-xl">{statusConfig[pedido.status].icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{pedido.numero}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{pedido.cliente} • {pedido.data} às {pedido.hora}</p>
                 </div>
-                
-                <div className="flex items-center space-x-4">
-                  <span className={`px-4 py-2 rounded-lg text-lg font-semibold ${statusConfig[pedido.status].color}`}>
-                    {statusConfig[pedido.status].label}
-                  </span>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(pedido.total)}</p>
-                  </div>
-                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`badge ${statusConfig[pedido.status].color}`}>
+                  {statusConfig[pedido.status].label}
+                </span>
+                <p className="text-sm font-bold text-gray-900 dark:text-white">{formatCurrency(pedido.total)}</p>
               </div>
             </div>
 
-            {/* Conteúdo do Pedido */}
-            <div className="p-8">
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Conteúdo */}
+            <div className="p-4">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Itens */}
                 <div className="xl:col-span-2">
-                  <h4 className="text-xl font-bold text-gray-900 mb-4">🛒 Itens do Pedido</h4>
-                  <div className="space-y-3">
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">ITENS</p>
+                  <div className="space-y-2">
                     {pedido.itens.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center py-3 border-b border-gray-100">
-                        <div>
-                          <p className="text-lg font-semibold text-gray-900">{item.nome}</p>
-                          <p className="text-gray-600">Qtd: {item.quantidade} × {formatCurrency(item.preco)}</p>
-                        </div>
-                        <div>
-                          <p className="text-lg font-bold text-gray-900">
-                            {formatCurrency(item.preco * item.quantidade)}
-                          </p>
-                        </div>
+                      <div key={index} className="flex justify-between text-sm">
+                        <span className="text-gray-700 dark:text-gray-300">{item.quantidade}× {item.nome}</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(item.preco * item.quantidade)}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Informações */}
-                <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-4">📋 Informações</h4>
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-900 mb-2">📞 Contato:</p>
-                      <p className="text-gray-600">{pedido.email}</p>
-                      <p className="text-gray-600">{pedido.telefone}</p>
-                    </div>
-                    
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <p className="font-semibold text-gray-900 mb-2">📍 Endereço:</p>
-                      <p className="text-gray-600">{pedido.endereco}</p>
-                    </div>
-
-                    {pedido.observacoes && (
-                      <div className="bg-yellow-50 rounded-lg p-4">
-                        <p className="font-semibold text-gray-900 mb-2">📝 Observações:</p>
-                        <p className="text-gray-600">{pedido.observacoes}</p>
-                      </div>
-                    )}
+                <div className="text-xs space-y-2">
+                  <div>
+                    <p className="font-medium text-gray-500 dark:text-gray-400">Contato</p>
+                    <p className="text-gray-700 dark:text-gray-300">{pedido.email}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{pedido.telefone}</p>
                   </div>
+                  {pedido.endereco && (
+                    <div>
+                      <p className="font-medium text-gray-500 dark:text-gray-400">Endereço</p>
+                      <p className="text-gray-700 dark:text-gray-300">{pedido.endereco}</p>
+                    </div>
+                  )}
+                  {pedido.observacoes && (
+                    <div className="p-2 bg-amber-50 dark:bg-amber-500/10 rounded">
+                      <p className="font-medium text-amber-700 dark:text-amber-400">Obs</p>
+                      <p className="text-amber-700 dark:text-amber-300">{pedido.observacoes}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Ações */}
-              <div className="mt-8 pt-6 border-t flex flex-wrap gap-3">
+              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-2">
                 {pedido.status === 'pendente' && (
-                  <button
-                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'confirmado')}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-                  >
-                    ✅ Confirmar Pedido
-                  </button>
+                  <button onClick={() => atualizarStatus(pedido._id || pedido.id, 'confirmado')} className="btn-primary py-1.5 px-3 text-xs">Confirmar</button>
                 )}
-                
                 {pedido.status === 'confirmado' && (
-                  <button
-                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'preparando')}
-                    className="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-semibold"
-                  >
-                    👨‍🍳 Iniciar Preparo
-                  </button>
+                  <button onClick={() => atualizarStatus(pedido._id || pedido.id, 'preparando')} className="btn-primary py-1.5 px-3 text-xs">Iniciar preparo</button>
                 )}
-                
                 {pedido.status === 'preparando' && (
-                  <button
-                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'saiu_entrega')}
-                    className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
-                  >
-                    🚚 Saiu para Entrega
-                  </button>
+                  <button onClick={() => atualizarStatus(pedido._id || pedido.id, 'saiu_entrega')} className="btn-primary py-1.5 px-3 text-xs">Saiu p/ entrega</button>
                 )}
-                
                 {pedido.status === 'saiu_entrega' && (
-                  <button
-                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'entregue')}
-                    className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                  >
-                    📦 Marcar como Entregue
-                  </button>
+                  <button onClick={() => atualizarStatus(pedido._id || pedido.id, 'entregue')} className="btn-primary py-1.5 px-3 text-xs">Marcar entregue</button>
                 )}
-
-                <button className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-semibold">
-                  📞 Ligar para Cliente
-                </button>
-
                 {['pendente', 'confirmado'].includes(pedido.status) && (
-                  <button
-                    onClick={() => atualizarStatus(pedido._id || pedido.id, 'cancelado')}
-                    className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold"
-                  >
-                    ❌ Cancelar Pedido
-                  </button>
+                  <button onClick={() => atualizarStatus(pedido._id || pedido.id, 'cancelado')} className="btn-danger py-1.5 px-3 text-xs">Cancelar</button>
                 )}
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { produtoService } from '../../services/produtoService';
 
@@ -14,10 +14,10 @@ export default function Cardapio() {
   const [erro, setErro] = useState(null);
 
   const categorias = [
-    { value: '', label: 'Todas as Categorias', icon: '🍽️' },
-    { value: 'pasteis', label: 'Pastéis', icon: '🥟' },
-    { value: 'bebidas', label: 'Bebidas', icon: '🥤' },
-    { value: 'sobremesas', label: 'Sobremesas', icon: '🍰' }
+    { value: '', label: 'Todas as Categorias', icon: 'ðŸ½ï¸' },
+    { value: 'pasteis', label: 'PastÃ©is', icon: 'ðŸ¥Ÿ' },
+    { value: 'bebidas', label: 'Bebidas', icon: 'ðŸ¥¤' },
+    { value: 'sobremesas', label: 'Sobremesas', icon: 'ðŸ°' }
   ];
 
   const carregarProdutos = async () => {
@@ -64,140 +64,101 @@ export default function Cardapio() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando cardápio...</p>
-        </div>
+      <div className="flex justify-center items-center min-h-64">
+        <div className="spinner w-8 h-8 border-2"></div>
       </div>
     );
   }
 
   if (erro) {
     return (
-      <div className="flex justify-center items-center min-h-96">
+      <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Erro ao carregar cardápio</h3>
-          <p className="text-gray-600 mb-4">{erro}</p>
-          <button
-            onClick={carregarProdutos}
-            className="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
-          >
-            Tentar novamente
-          </button>
+          <p className="text-4xl mb-3">âš ï¸</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
+          <button onClick={carregarProdutos} className="btn-primary">Tentar novamente</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">🍽️ Nosso Cardápio</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Explore nossa seleção de pastéis artesanais, bebidas refrescantes e sobremesas irresistíveis!
-        </p>
+      <div>
+        <h1 className="page-title">CardÃ¡pio</h1>
+        <p className="page-subtitle">PastÃ©is artesanais, bebidas e sobremesas</p>
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Busca */}
+      <div className="section-card">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">🔍 Buscar</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Buscar</label>
             <input
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              placeholder="Digite o nome do produto..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+              placeholder="Nome do produtoâ€¦"
+              className="input"
             />
           </div>
-
-          {/* Categoria */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">🏷️ Categoria</label>
-            <select
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-            >
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Categoria</label>
+            <select value={categoria} onChange={(e) => setCategoria(e.target.value)} className="input">
               {categorias.map(cat => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.icon} {cat.label}
-                </option>
+                <option key={cat.value} value={cat.value}>{cat.icon} {cat.label}</option>
               ))}
             </select>
           </div>
-
-          {/* Ordenação */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">📊 Ordenar por</label>
-            <select
-              value={ordenacao}
-              onChange={(e) => setOrdenacao(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-            >
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Ordenar</label>
+            <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className="input">
               <option value="nome">Nome (A-Z)</option>
-              <option value="preco-asc">Preço (Menor → Maior)</option>
-              <option value="preco-desc">Preço (Maior → Menor)</option>
+              <option value="preco-asc">PreÃ§o (menor)</option>
+              <option value="preco-desc">PreÃ§o (maior)</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Resultados */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            {produtosFiltrados.length} {produtosFiltrados.length === 1 ? 'produto encontrado' : 'produtos encontrados'}
-          </h2>
-        </div>
-
-        {/* Grid de Produtos - EXPANDIDO PARA TELAS GRANDES */}
-        {produtosFiltrados.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-8">
+      {/* Grid */}
+      {produtosFiltrados.length > 0 ? (
+        <>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {produtosFiltrados.length} produto(s) encontrado(s)
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {produtosFiltrados.map(produto => (
-              <div key={produto.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                {/* Imagem placeholder */}
-                <div className="h-48 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
-                  <span className="text-6xl">
-                    {produto.categoria === 'pasteis' ? '🥟' :
-                     produto.categoria === 'bebidas' ? '🥤' : '🍰'}
+              <div key={produto.id} className="card card-hover overflow-hidden">
+                <div className="h-28 bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                  <span className="text-4xl">
+                    {produto.categoria === 'pasteis' ? 'ðŸ¥Ÿ' :
+                     produto.categoria === 'bebidas' ? 'ðŸ¥¤' : 'ðŸ°'}
                   </span>
                 </div>
-
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{produto.nome}</h3>
-                    <span className="text-xl font-bold text-yellow-600">
-                      {formatCurrency(produto.preco)}
-                    </span>
+                <div className="p-3">
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs font-semibold text-gray-900 dark:text-white leading-tight">{produto.nome}</p>
                   </div>
-
-                  <p className="text-gray-600 text-sm mb-4">{produto.descricao}</p>
-
-                  <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full mb-4 capitalize">
-                    {produto.categoria}
-                  </span>
-
-                  <button className="w-full bg-yellow-600 text-white py-2 px-4 rounded-md hover:bg-yellow-700 transition-colors font-medium">
-                    🛒 Adicionar ao Carrinho
-                  </button>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mb-1">{formatCurrency(produto.preco)}</p>
+                  {produto.descricao && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-2 mb-2">{produto.descricao}</p>
+                  )}
+                  <span className="badge bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 capitalize text-[10px] mb-2">{produto.categoria}</span>
+                  <button className="w-full btn-primary py-1 text-xs">Adicionar</button>
                 </div>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">😔</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum produto encontrado</h3>
-            <p className="text-gray-600">Tente ajustar os filtros ou buscar por outro termo.</p>
-          </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className="section-card flex flex-col items-center py-16 text-center">
+          <span className="text-5xl mb-3">ðŸ˜”</span>
+          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Nenhum produto encontrado</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Tente ajustar os filtros.</p>
+        </div>
+      )}
     </div>
   );
 }
