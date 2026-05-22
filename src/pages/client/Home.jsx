@@ -20,16 +20,16 @@ export default function Home() {
       {/* Hero */}
       <section className="text-center py-20 lg:py-28">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-500/10 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400 mb-6">
-          <span>ðŸ¥Ÿ</span> Pasteis artesanais fresquinhos
+          <span>🥟</span> Pasteis artesanais fresquinhos
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-          Os Melhores PastÃ©is<br />da Cidade
+          Os Melhores Pastéis<br />da Cidade
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 mb-8 max-w-xl mx-auto">
-          Feitos com ingredientes frescos e muito carinho. TradiÃ§Ã£o e sabor em cada mordida!
+          Feitos com ingredientes frescos e muito carinho. Tradição e sabor em cada mordida!
         </p>
         <Link to="/cardapio" className="btn-primary px-8 py-3">
-          Ver CardÃ¡pio
+          Ver Cardápio
         </Link>
       </section>
 
@@ -42,7 +42,7 @@ export default function Home() {
               <div key={item._id || item.id} className="card card-hover overflow-hidden">
                 <div className="h-28 bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
                   <span className="text-4xl">
-                    {item.categoria === 'bebidas' ? 'ðŸ¥¤' : item.categoria === 'sobremesas' ? 'ðŸ°' : 'ðŸ¥Ÿ'}
+                    {item.categoria === 'bebidas' ? '🥤' : item.categoria === 'sobremesas' ? '🍰' : '🥟'}
                   </span>
                 </div>
                 <div className="p-3">
@@ -61,16 +61,16 @@ export default function Home() {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-8">Nossas Especialidades</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
-            { emoji: 'ðŸ¥Ÿ', title: 'PastÃ©is Artesanais', desc: 'Massa crocante e recheios generosos. Carne, queijo, frango e muito mais!', cat: 'pasteis' },
-            { emoji: 'ðŸ¥¤', title: 'Bebidas Geladas', desc: 'Sucos naturais e refrigerantes para acompanhar seu pastel favorito.', cat: 'bebidas' },
-            { emoji: 'ðŸ°', title: 'Sobremesas', desc: 'PastÃ©is doces e sobremesas irresistÃ­veis para finalizar.', cat: 'sobremesas' },
+            { emoji: '🥟', title: 'Pastéis Artesanais', desc: 'Massa crocante e recheios generosos. Carne, queijo, frango e muito mais!', cat: 'pasteis' },
+            { emoji: '🥤', title: 'Bebidas Geladas', desc: 'Sucos naturais e refrigerantes para acompanhar seu pastel favorito.', cat: 'bebidas' },
+            { emoji: '🍰', title: 'Sobremesas', desc: 'Pastéis doces e sobremesas irresistíveis para finalizar.', cat: 'sobremesas' },
           ].map(({ emoji, title, desc, cat }) => (
             <div key={cat} className="card card-hover p-6 text-center">
               <span className="text-5xl mb-4 block">{emoji}</span>
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">{desc}</p>
               <Link to={`/cardapio?categoria=${cat}`} className="text-xs text-amber-600 dark:text-amber-400 hover:underline font-medium">
-                Ver {title.split(' ')[0]} â†’
+                Ver {title.split(' ')[0]} →
               </Link>
             </div>
           ))}
@@ -79,8 +79,8 @@ export default function Home() {
 
       {/* CTA */}
       <section className="bg-gray-900 dark:bg-gray-800 text-white rounded-2xl p-12 text-center">
-        <h2 className="text-2xl font-bold mb-3">FaÃ§a Seu Pedido Agora!</h2>
-        <p className="text-gray-400 mb-6 text-sm">Delivery rÃ¡pido. Sabor na sua casa em poucos cliques!</p>
+        <h2 className="text-2xl font-bold mb-3">Faça Seu Pedido Agora!</h2>
+        <p className="text-gray-400 mb-6 text-sm">Delivery rápido. Sabor na sua casa em poucos cliques!</p>
         <Link to="/cardapio" className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-lg font-medium transition-colors">
           Fazer Pedido
         </Link>

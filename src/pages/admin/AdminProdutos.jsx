@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { produtoService } from '../../services/produtoService';
 
 function ModalProduto({ produto, onClose, onSalvar }) {
@@ -182,7 +182,7 @@ export default function AdminProdutos() {
     return (
       <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <p className="text-4xl mb-3">⚠️</p>
+          <p className="text-4xl mb-3">??</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
           <button onClick={carregarProdutos} className="btn-primary">Tentar novamente</button>
         </div>
@@ -210,28 +210,28 @@ export default function AdminProdutos() {
             <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{produtos.length}</p>
           </div>
-          <span className="text-2xl">📦</span>
+          <span className="text-2xl">??</span>
         </div>
         <div className="stat-card">
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400">Ativos</p>
             <p className="text-2xl font-bold text-green-600">{produtos.filter(p => p.ativo).length}</p>
           </div>
-          <span className="text-2xl">✅</span>
+          <span className="text-2xl">?</span>
         </div>
         <div className="stat-card">
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400">Estoque baixo</p>
             <p className="text-2xl font-bold text-orange-500">{produtos.filter(p => p.estoque < 20).length}</p>
           </div>
-          <span className="text-2xl">⚠️</span>
+          <span className="text-2xl">??</span>
         </div>
         <div className="stat-card">
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400">Mais vendido</p>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{produtoMaisVendido?.nome || '—'}</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{produtoMaisVendido?.nome || '�'}</p>
           </div>
-          <span className="text-2xl">🏆</span>
+          <span className="text-2xl">??</span>
         </div>
       </div>
 
@@ -279,7 +279,7 @@ export default function AdminProdutos() {
               <th className="table-header">Estoque</th>
               <th className="table-header">Vendas/Mês</th>
               <th className="table-header">Status</th>
-              <th className="table-header">Ções</th>
+              <th className="table-header">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -306,7 +306,7 @@ export default function AdminProdutos() {
                     produto.estoque < 10 ? 'text-red-500' :
                     produto.estoque < 20 ? 'text-amber-500' : 'text-green-600'
                   }`}>
-                    {produto.estoque != null ? `${produto.estoque} un` : '—'}
+                    {produto.estoque != null ? `${produto.estoque} un` : '�'}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{produto.vendas_mes ?? '—'}</td>

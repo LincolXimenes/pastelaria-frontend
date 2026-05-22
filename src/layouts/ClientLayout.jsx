@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../components/shared/ThemeToggle';
 
@@ -20,7 +20,7 @@ export default function ClientLayout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
-      {/* ── Header ─────────────────────────────────────────── */}
+      {/* -- Header ------------------------------------------- */}
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -120,12 +120,12 @@ export default function ClientLayout({ children }) {
         )}
       </header>
 
-      {/* ── Main ───────────────────────────────────────────── */}
+      {/* -- Main --------------------------------------------- */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
 
-      {/* ── Footer ─────────────────────────────────────────── */}
+      {/* -- Footer ------------------------------------------- */}
       <footer className="bg-gray-900 dark:bg-gray-950 border-t border-gray-800 text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -155,16 +155,16 @@ export default function ClientLayout({ children }) {
               <div className="space-y-2 text-sm text-gray-400">
                 <p>📍 Rua das Delícias, 123</p>
                 <p>📞 (11) 99999-9999</p>
-                <p>📧 contato@pastelariadelicia.com</p>
+                <p>✉️ contato@pastelariadelicia.com</p>
               </div>
             </div>
 
             <div>
               <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Horário</h3>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>Seg–Sex: 10h às 22h</p>
-                <p>Sábados: 10h às 23h</p>
-                <p>Domingos: 14h às 20h</p>
+                <p>Seg–Sex: às 22h</p>
+                <p>Sábados: às 23h</p>
+                <p>Domingos: às 20h</p>
               </div>
             </div>
           </div>

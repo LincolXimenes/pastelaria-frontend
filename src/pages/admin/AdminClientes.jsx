@@ -41,7 +41,7 @@ export default function AdminClientes() {
     return (
       <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <p className="text-4xl mb-3">âš ï¸</p>
+          <p className="text-4xl mb-3">⚠️</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
           <button onClick={carregarClientes} className="btn-primary">Tentar novamente</button>
         </div>
@@ -66,7 +66,7 @@ export default function AdminClientes() {
           type="text"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Nome ou e-mailâ€¦"
+          placeholder="Nome ou e-mail…"
           className="input max-w-sm"
         />
       </div>
@@ -95,9 +95,9 @@ export default function AdminClientes() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{cliente.email}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{cliente.telefone || 'â€”'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{cliente.telefone || '—'}</td>
                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                    {cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString('pt-BR') : 'â€”'}
+                    {cliente.createdAt ? new Date(cliente.createdAt).toLocaleDateString('pt-BR') : '—'}
                   </td>
                 </tr>
               ))}
@@ -106,7 +106,7 @@ export default function AdminClientes() {
         </div>
       ) : (
         <div className="section-card flex flex-col items-center justify-center py-16 text-center">
-          <span className="text-4xl mb-3">ðŸ‘¤</span>
+          <span className="text-4xl mb-3">👤</span>
           <p className="text-sm text-gray-500 dark:text-gray-400">Nenhum cliente encontrado.</p>
         </div>
       )}

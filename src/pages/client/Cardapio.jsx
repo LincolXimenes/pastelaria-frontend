@@ -14,10 +14,10 @@ export default function Cardapio() {
   const [erro, setErro] = useState(null);
 
   const categorias = [
-    { value: '', label: 'Todas as Categorias', icon: 'ðŸ½ï¸' },
-    { value: 'pasteis', label: 'PastÃ©is', icon: 'ðŸ¥Ÿ' },
-    { value: 'bebidas', label: 'Bebidas', icon: 'ðŸ¥¤' },
-    { value: 'sobremesas', label: 'Sobremesas', icon: 'ðŸ°' }
+    { value: '', label: 'Todas as Categorias', icon: '🍽️' },
+    { value: 'pasteis', label: 'Pastéis', icon: '🥟' },
+    { value: 'bebidas', label: 'Bebidas', icon: '🥤' },
+    { value: 'sobremesas', label: 'Sobremesas', icon: '🍰' }
   ];
 
   const carregarProdutos = async () => {
@@ -74,7 +74,7 @@ export default function Cardapio() {
     return (
       <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <p className="text-4xl mb-3">âš ï¸</p>
+          <p className="text-4xl mb-3">⚠️</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
           <button onClick={carregarProdutos} className="btn-primary">Tentar novamente</button>
         </div>
@@ -86,8 +86,8 @@ export default function Cardapio() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="page-title">CardÃ¡pio</h1>
-        <p className="page-subtitle">PastÃ©is artesanais, bebidas e sobremesas</p>
+        <h1 className="page-title">Cardápio</h1>
+        <p className="page-subtitle">Pastéis artesanais, bebidas e sobremesas</p>
       </div>
 
       {/* Filtros */}
@@ -99,7 +99,7 @@ export default function Cardapio() {
               type="text"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              placeholder="Nome do produtoâ€¦"
+              placeholder="Nome do produto…"
               className="input"
             />
           </div>
@@ -115,8 +115,8 @@ export default function Cardapio() {
             <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Ordenar</label>
             <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className="input">
               <option value="nome">Nome (A-Z)</option>
-              <option value="preco-asc">PreÃ§o (menor)</option>
-              <option value="preco-desc">PreÃ§o (maior)</option>
+              <option value="preco-asc">Preço (menor)</option>
+              <option value="preco-desc">Preço (maior)</option>
             </select>
           </div>
         </div>
@@ -133,8 +133,8 @@ export default function Cardapio() {
               <div key={produto.id} className="card card-hover overflow-hidden">
                 <div className="h-28 bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
                   <span className="text-4xl">
-                    {produto.categoria === 'pasteis' ? 'ðŸ¥Ÿ' :
-                     produto.categoria === 'bebidas' ? 'ðŸ¥¤' : 'ðŸ°'}
+                    {produto.categoria === 'pasteis' ? '🥟' :
+                     produto.categoria === 'bebidas' ? '🥤' : '🍰'}
                   </span>
                 </div>
                 <div className="p-3">
@@ -154,7 +154,7 @@ export default function Cardapio() {
         </>
       ) : (
         <div className="section-card flex flex-col items-center py-16 text-center">
-          <span className="text-5xl mb-3">ðŸ˜”</span>
+          <span className="text-5xl mb-3">😔</span>
           <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Nenhum produto encontrado</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">Tente ajustar os filtros.</p>
         </div>

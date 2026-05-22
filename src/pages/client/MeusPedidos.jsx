@@ -11,32 +11,32 @@ export default function MeusPedidos() {
     pendente: { 
       label: 'Pendente', 
       color: 'bg-yellow-100 text-yellow-800', 
-      icon: 'â³' 
+      icon: '⏳' 
     },
     confirmado: { 
       label: 'Confirmado', 
       color: 'bg-blue-100 text-blue-800', 
-      icon: 'âœ…' 
+      icon: '✅' 
     },
     preparando: { 
       label: 'Preparando', 
       color: 'bg-orange-100 text-orange-800', 
-      icon: 'ðŸ‘¨â€ðŸ³' 
+      icon: '👨‍🍳' 
     },
     saiu_entrega: { 
       label: 'Saiu para Entrega', 
       color: 'bg-purple-100 text-purple-800', 
-      icon: 'ðŸšš' 
+      icon: '🚚' 
     },
     entregue: { 
       label: 'Entregue', 
       color: 'bg-green-100 text-green-800', 
-      icon: 'ðŸ“¦' 
+      icon: '📦' 
     },
     cancelado: { 
       label: 'Cancelado', 
       color: 'bg-red-100 text-red-800', 
-      icon: 'âŒ' 
+      icon: '❌' 
     }
   };
 
@@ -87,7 +87,7 @@ export default function MeusPedidos() {
     return (
       <div className="flex justify-center items-center min-h-64">
         <div className="text-center">
-          <p className="text-4xl mb-3">âš ï¸</p>
+          <p className="text-4xl mb-3">⚠️</p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{erro}</p>
           <button onClick={carregarPedidos} className="btn-primary">Tentar novamente</button>
         </div>
@@ -100,7 +100,7 @@ export default function MeusPedidos() {
       {/* Header */}
       <div>
         <h1 className="page-title">Meus Pedidos</h1>
-        <p className="page-subtitle">Acompanhe o status e histÃ³rico dos seus pedidos</p>
+        <p className="page-subtitle">Acompanhe o status e histórico dos seus pedidos</p>
       </div>
 
       {/* Filtros */}
@@ -145,14 +145,14 @@ export default function MeusPedidos() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
                 <div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">Pedido {pedido.numero}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(pedido.data)} â€¢ {formatCurrency(pedido.total)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(pedido.data)} • {formatCurrency(pedido.total)}</p>
                 </div>
                 <span className={`badge ${statusConfig[pedido.status].color}`}>
                   {statusConfig[pedido.status].icon} {statusConfig[pedido.status].label}
                 </span>
               </div>
 
-              {/* ConteÃºdo */}
+              {/* Conteúdo */}
               <div className="p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {/* Itens */}
@@ -161,7 +161,7 @@ export default function MeusPedidos() {
                     <div className="space-y-2">
                       {pedido.itens.map((item, index) => (
                         <div key={index} className="flex justify-between text-sm">
-                          <span className="text-gray-700 dark:text-gray-300">{item.quantidade}Ã— {item.nome}</span>
+                          <span className="text-gray-700 dark:text-gray-300">{item.quantidade}× {item.nome}</span>
                           <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(item.preco * item.quantidade)}</span>
                         </div>
                       ))}
@@ -172,7 +172,7 @@ export default function MeusPedidos() {
                   <div className="text-xs">
                     {pedido.endereco && (
                       <div className="mb-2">
-                        <p className="font-medium text-gray-500 dark:text-gray-400 mb-1">EndereÃ§o</p>
+                        <p className="font-medium text-gray-500 dark:text-gray-400 mb-1">Endereço</p>
                         <p className="text-gray-700 dark:text-gray-300">{pedido.endereco}</p>
                       </div>
                     )}
@@ -185,7 +185,7 @@ export default function MeusPedidos() {
                   </div>
                 </div>
 
-                {/* AÃ§Ãµes */}
+                {/* Ações */}
                 <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-2">
                   <button className="btn-primary py-1.5 px-3 text-xs">Repetir pedido</button>
                   {pedido.status === 'entregue' && (
@@ -201,14 +201,14 @@ export default function MeusPedidos() {
         </div>
       ) : (
         <div className="section-card flex flex-col items-center py-16 text-center">
-          <span className="text-5xl mb-3">ðŸ“­</span>
+          <span className="text-5xl mb-3">🔭</span>
           <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
             {filtroStatus === 'todos' ? 'Nenhum pedido encontrado' : 'Nenhum pedido com este status'}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
             {filtroStatus === 'todos' ? 'Que tal fazer seu primeiro pedido?' : 'Tente outro status.'}
           </p>
-          <a href="/cardapio" className="btn-primary text-xs">Ver CardÃ¡pio</a>
+          <a href="/cardapio" className="btn-primary text-xs">Ver Cardápio</a>
         </div>
       )}
     </div>
