@@ -1,11 +1,33 @@
 import api from './api';
 
+function normalizeListResponse(payload) {
+  if (Array.isArray(payload)) {
+    return {
+      data: payload,
+      pagination: null
+    };
+  }
+
+  if (payload && Array.isArray(payload.data)) {
+    return {
+      data: payload.data,
+      pagination: payload.pagination || null
+    };
+  }
+
+  return {
+    data: [],
+    pagination: null
+  };
+}
+
 export const produtoService = {
   // Listar todos os produtos
-  listar: async () => {
+  listar: async (params = {}) => {
     try {
-      const response = await api.get('/api/produtos');
-      return { success: true, data: response.data };
+      const response = await api.get('/api/produtos', { params });
+      const normalized = normalizeListResponse(response.data);
+      return { success: true, data: normalized.data, pagination: normalized.pagination };
     } catch (error) {
       return { 
         success: false, 

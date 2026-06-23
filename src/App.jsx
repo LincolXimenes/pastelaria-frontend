@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import ClientLayout from './layouts/ClientLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/client/Home';
@@ -11,6 +12,8 @@ import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProdutos from './pages/admin/AdminProdutos';
 import AdminPedidos from './pages/admin/AdminPedidos';
+import AdminRelatorios from './pages/admin/AdminRelatorios';
+import AdminClientes from './pages/admin/AdminClientes';
 
 // Componente para proteger rotas admin
 function ProtectedRoute({ children }) {
@@ -29,9 +32,9 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="App">
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
           <Routes>
             {/* Rotas do Cliente */}
             <Route path="/" element={
@@ -87,15 +90,31 @@ function App() {
               </ProtectedRoute>
             } />
 
+            <Route path="/admin/relatorios" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminRelatorios />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/admin/clientes" element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminClientes />
+                </AdminLayout>
+              </ProtectedRoute>
+            } />
+
             {/* Redirect /admin para /admin/dashboard */}
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             
             {/* Redirect padrão */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

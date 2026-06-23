@@ -1,169 +1,151 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Alert from '../components/shared/Alert';
+import ThemeToggle from '../components/shared/ThemeToggle';
 
 export default function Login() {
-  console.log('Variáveis de ambiente:', {
-    VITE_API_URL: import.meta.env.VITE_API_URL,
-    MODE: import.meta.env.MODE,
-    DEV: import.meta.env.DEV
-  });
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
-  
+  const [error, setError] = useState(null);
+  const [showPass, setShowPass] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setAlert(null);
+    setError(null);
 
-    console.log('Iniciando login...');
     const result = await login(email, password);
 
     if (result.success) {
-      console.log('Login bem-sucedido, redirecionando para admin dashboard...');
-      // CORRIGIR: Redirecionar para a rota admin correta
       navigate('/admin/dashboard');
     } else {
-      console.log('Erro no login:', result.error);
-      setAlert({ type: 'error', message: result.error });
+      setError(result.error);
     }
 
     setLoading(false);
   };
 
-  // Função para testar a conexão diretamente
-  const testarConexao = async () => {
-    try {
-      setAlert(null);
-      console.log('Testando conexão com o backend...');
-      
-      const response = await fetch('http://localhost:5000/users/login', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ 
-          email: email || 'teste@teste.com', 
-          password: password || '123456' 
-        })
-      });
-      
-      console.log('Status da resposta:', response.status);
-      const data = await response.text();
-      console.log('Dados da resposta:', data);
-      
-      if (response.ok) {
-        setAlert({ type: 'success', message: 'Conexão OK! Dados: ' + data });
-      } else {
-        setAlert({ type: 'error', message: `Erro ${response.status}: ${data}` });
-      }
-    } catch (error) {
-      console.error('Erro na conexão:', error);
-      setAlert({ type: 'error', message: 'Erro de conexão: ' + error.message });
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="flex justify-center mb-4">
-            <div className="text-6xl">🥟</div>
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
+      {/* theme toggle top-right */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
+      <div className="flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm animate-[slideUp_0.3s_ease-out]">
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-amber-100 dark:bg-amber-500/20 rounded-2xl mb-4">
+              <span className="text-3xl">🥟</span>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pastelaria Delícia</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Acesso ao painel administrativo</p>
           </div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Pastelaria Delícia - Admin
-          </h2>
-          <p className="text-center text-sm text-gray-600 mt-2">
-            API: {import.meta.env.VITE_API_URL || 'http://localhost:5000'}
+
+          {/* Card */}
+          <div className="card p-6 space-y-5">
+            {/* Error */}
+            {error && (
+              <div className="flex items-start gap-3 px-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-sm text-red-700 dark:text-red-400 animate-[fadeIn_0.2s_ease-out]">
+                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                <span>{error}</span>
+                <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  E-mail
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="input"
+                  placeholder="admin@pastelaria.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              {/* Senha */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  Senha
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPass ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    required
+                    className="input pr-10"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(v => !v)}
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                    tabIndex={-1}
+                    aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showPass ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full py-2.5"
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner w-4 h-4" />
+                    Entrando…
+                  </>
+                ) : (
+                  'Entrar'
+                )}
+              </button>
+            </form>
+          </div>
+
+          <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-6">
+            Pastelaria Delícia &copy; {new Date().getFullYear()}
           </p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {/* Alert inline em vez de componente */}
-          {alert && (
-            <div className={`px-4 py-3 rounded relative ${
-              alert.type === 'error' 
-                ? 'bg-red-100 border border-red-400 text-red-700'
-                : 'bg-green-100 border border-green-400 text-green-700'
-            }`}>
-              <span className="block sm:inline">{alert.message}</span>
-              <button 
-                type="button"
-                onClick={() => setAlert(null)}
-                className="absolute top-0 right-0 px-4 py-3"
-              >
-                <span className="text-2xl">&times;</span>
-              </button>
-            </div>
-          )}
-          
-          <div>
-            <label htmlFor="email" className="sr-only">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-              placeholder="Email (admin@pastelaria.com)"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="password" className="sr-only">Senha</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="relative block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
-              placeholder="Senha (123456)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Entrando...
-                </>
-              ) : 'Entrar no Painel Admin'}
-            </button>
-            
-            <button
-              type="button"
-              onClick={testarConexao}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              🔧 Testar Conexão Backend
-            </button>
-          </div>
-
-          <div className="text-center text-sm text-gray-500">
-            <p>Credenciais padrão:</p>
-            <p><strong>admin@pastelaria.com</strong> / <strong>123456</strong></p>
-          </div>
-        </form>
       </div>
     </div>
   );
